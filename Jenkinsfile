@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME = "NodeTodo-app"
+        APP_NAME = "nodetodo-app"
         DOCKERHUB_USERNAME = "19simran"
         IMAGE_NAME = "${DOCKERHUB_USERNAME}/${APP_NAME}"
         IMAGE_TAG = "${BUILD_NUMBER}"
