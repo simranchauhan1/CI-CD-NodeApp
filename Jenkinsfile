@@ -33,6 +33,7 @@ pipeline {
                     node --version
                     npm --version
                     docker --version
+                    trivy --version
                 '''
             }
         }
@@ -43,11 +44,33 @@ pipeline {
             }
         }
 
+        stage('Trivy Filesystem Scan') {
+            steps {
+                sh '''
+                    trivy fs \
+                    --severity HIGH,CRITICAL \
+                    --exit-code 0 \
+                    .
+            '''
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
                     def dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
                 }
+            }
+        }
+        
+        stage('Trivy Image Scan') {
+            steps {
+                sh '''
+                    trivy image \
+                    --severity HIGH,CRITICAL \
+                    --exit-code 0 \
+                    ${IMAGE_NAME}:${IMAGE_TAG}
+                '''
             }
         }
 
