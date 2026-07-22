@@ -119,21 +119,57 @@ pipeline {
 
     post {
 
-        always {
-            sh 'docker image prune -f || true'
-            cleanWs()
-        }
-
-        success {
-            echo "Pipeline completed successfully."
-        }
-
-        failure {
-            echo "Pipeline failed."
-        }
-
-        unstable {
-            echo "Pipeline is unstable."
-        }
+    always {
+        sh 'docker image prune -f || true'
+        cleanWs()
     }
+
+    success {
+        echo "Pipeline completed successfully."
+
+        slackSend(
+            channel: "#jenkins-alerts",
+            color: "good",
+            message: """
+✅ *Build Successful*
+
+*Job:* ${env.JOB_NAME}
+*Build:* #${env.BUILD_NUMBER}
+*Image:* ${IMAGE_NAME}:${IMAGE_TAG}
+*URL:* ${env.BUILD_URL}
+"""
+        )
+    }
+
+    failure {
+        echo "Pipeline failed."
+
+        slackSend(
+            channel: "#jenkins-alerts",
+            color: "danger",
+            message: """
+❌ *Build Failed*
+
+*Job:* ${env.JOB_NAME}
+*Build:* #${env.BUILD_NUMBER}
+*Check Logs:* ${env.BUILD_URL}
+"""
+        )
+    }
+
+    unstable {
+        slackSend(
+            channel: "#jenkins-alerts",
+            color: "warning",
+            message: """
+⚠️ *Build Unstable*
+
+*Job:* ${env.JOB_NAME}
+*Build:* #${env.BUILD_NUMBER}
+*URL:* ${env.BUILD_URL}
+"""
+        )
+    }
+}
+
 }
