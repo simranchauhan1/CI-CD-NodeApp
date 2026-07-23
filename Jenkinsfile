@@ -128,7 +128,7 @@ pipeline {
         echo "Pipeline completed successfully."
 
         slackSend(
-            channel: "#jenkins-alerts",
+            channel: '#devops-alerts',
             color: "good",
             message: """
 ✅ *Build Successful*
@@ -145,7 +145,7 @@ pipeline {
         echo "Pipeline failed."
 
         slackSend(
-            channel: "#jenkins-alerts",
+            channel: "#devops-alerts",
             color: "danger",
             message: """
 ❌ *Build Failed*
@@ -159,7 +159,7 @@ pipeline {
 
     unstable {
         slackSend(
-            channel: "#jenkins-alerts",
+            channel: "#devops-alerts",
             color: "warning",
             message: """
 ⚠️ *Build Unstable*
